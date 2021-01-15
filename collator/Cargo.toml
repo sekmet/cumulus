@@ -17,13 +17,13 @@ sc-client-api = { git = "https://github.com/paritytech/substrate", branch = "mas
 sc-cli = { git = "https://github.com/paritytech/substrate", branch = "master" }
 
 # Polkadot dependencies
-polkadot-service = { git = "https://github.com/paritytech/polkadot", features = [ "real-overseer" ], branch = "master" }
-polkadot-parachain = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-primitives = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-validation = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-node-primitives = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-overseer = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-node-subsystem = { git = "https://github.com/paritytech/polkadot", branch = "master" }
+polkadot-service = { git = "https://github.com/paritytech/polkadot", features = [ "real-overseer" ], branch = "ser-remove-transient" }
+polkadot-parachain = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-primitives = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-validation = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-node-primitives = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-overseer = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-node-subsystem = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
 
 # Cumulus dependencies
 cumulus-network = { path = "../network" }
@@ -48,8 +48,8 @@ sp-state-machine = { git = "https://github.com/paritytech/substrate", branch = "
 substrate-test-client = { git = "https://github.com/paritytech/substrate", branch = "master" }
 
 # Polkadot dependencies
-polkadot-test-client = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-node-subsystem-test-helpers = { git = "https://github.com/paritytech/polkadot", branch = "master" }
+polkadot-test-client = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-node-subsystem-test-helpers = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
 
 # Other dependencies
 env_logger = "0.7.1"

@@ -13,7 +13,7 @@ sp-state-machine = { git = "https://github.com/paritytech/substrate", default-fe
 sp-runtime = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "master" }
 
 # Polkadot dependencies
-polkadot-primitives = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "master" }
+polkadot-primitives = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "ser-remove-transient" }
 
 # Cumulus dependencies
 cumulus-primitives = { path = "../../primitives", default-features = false }

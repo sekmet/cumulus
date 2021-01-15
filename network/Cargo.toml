@@ -15,13 +15,13 @@ sp-core = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-client-api = { git = "https://github.com/paritytech/substrate", branch = "master" }
 
 # Polkadot deps
-polkadot-primitives = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-statement-table = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-validation = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-overseer = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-node-primitives = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-node-subsystem = { git = "https://github.com/paritytech/polkadot", branch = "master" }
-polkadot-service = { git = "https://github.com/paritytech/polkadot", branch = "master" }
+polkadot-primitives = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-statement-table = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-validation = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-overseer = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-node-primitives = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-node-subsystem = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
+polkadot-service = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
 
 # Cumulus deps
 cumulus-primitives = { path = "../primitives" }
@@ -39,7 +39,7 @@ derive_more = "0.99.2"
 cumulus-test-service = { path = "../test/service" }
 
 # Polkadot deps
-polkadot-test-client = { git = "https://github.com/paritytech/polkadot", branch = "master" }
+polkadot-test-client = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
 
 # substrate deps
 sc-client-api = { git = "https://github.com/paritytech/substrate", branch = "master" }

@@ -29,7 +29,7 @@ cumulus-test-relay-sproof-builder = { path = "../relay-sproof-builder" }
 cumulus-primitives = { path = "../../primitives" }
 
 # Polkadot deps
-polkadot-primitives = { git = "https://github.com/paritytech/polkadot", branch = "master" }
+polkadot-primitives = { git = "https://github.com/paritytech/polkadot", branch = "ser-remove-transient" }
 
 # Other deps
 codec = { package = "parity-scale-codec", version = "1.0.5", default-features = false, features = [ "derive" ] }
