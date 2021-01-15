@@ -1090,7 +1090,7 @@ dependencies = [
 name = "cumulus-message-broker"
 version = "0.1.0"
 dependencies = [
- "cumulus-parachain-upgrade",
+ "cumulus-parachain-system",
  "cumulus-primitives",
  "frame-support",
  "frame-system",
@@ -1130,7 +1130,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "cumulus-parachain-upgrade"
+name = "cumulus-parachain-system"
 version = "0.1.0"
 dependencies = [
  "cumulus-primitives",
@@ -1256,7 +1256,7 @@ name = "cumulus-test-parachain-runtime"
 version = "0.1.0"
 dependencies = [
  "cumulus-message-broker",
- "cumulus-parachain-upgrade",
+ "cumulus-parachain-system",
  "cumulus-primitives",
  "cumulus-runtime",
  "frame-executive",
@@ -1305,7 +1305,7 @@ dependencies = [
 name = "cumulus-test-runtime"
 version = "0.1.0"
 dependencies = [
- "cumulus-parachain-upgrade",
+ "cumulus-parachain-system",
  "cumulus-primitives",
  "cumulus-runtime",
  "frame-executive",
