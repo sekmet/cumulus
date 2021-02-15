@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 
-use cumulus_network::build_block_announce_validator;
-use cumulus_service::{
+use cumulus_client_network::build_block_announce_validator;
+use cumulus_primitives_core::ParaId;
+use cumulus_client_service::{
 	prepare_node_config, start_collator, start_full_node, StartCollatorParams, StartFullNodeParams,
 };
 use parachain_runtime::RuntimeApi;
@@ -63,12 +64,13 @@ pub fn new_partial(
 
 	let transaction_pool = sc_transaction_pool::BasicPool::new_full(
 		config.transaction_pool.clone(),
+		config.role.is_authority().into(),
 		config.prometheus_registry(),
 		task_manager.spawn_handle(),
 		client.clone(),
 	);
 
-	let import_queue = cumulus_consensus::import_queue::import_queue(
+	let import_queue = cumulus_client_consensus::import_queue::import_queue(
 		client.clone(),
 		client.clone(),
 		inherent_data_providers.clone(),
@@ -94,12 +96,12 @@ pub fn new_partial(
 /// Start a node with the given parachain `Configuration` and relay chain `Configuration`.
 ///
 /// This is the actual implementation that is abstract over the executor and the runtime api.
-#[sc_cli::prefix_logs_with("Parachain")]
+#[sc_tracing::logging::prefix_logs_with("Parachain")]
 async fn start_node_impl<RB>(
 	parachain_config: Configuration,
 	collator_key: CollatorPair,
 	polkadot_config: Configuration,
-	id: polkadot_primitives::v0::Id,
+	id: ParaId,
 	validator: bool,
 	rpc_ext_builder: RB,
 ) -> sc_service::error::Result<(TaskManager, Arc<TFullClient<Block, RuntimeApi, Executor>>)>
@@ -117,7 +119,7 @@ where
 	let parachain_config = prepare_node_config(parachain_config);
 
 	let polkadot_full_node =
-		cumulus_service::build_polkadot_full_node(polkadot_config, collator_key.public()).map_err(
+		cumulus_client_service::build_polkadot_full_node(polkadot_config, collator_key.public()).map_err(
 			|e| match e {
 				polkadot_service::Error::Sub(x) => x,
 				s => format!("{}", s).into(),
@@ -164,7 +166,6 @@ where
 		client: client.clone(),
 		transaction_pool: transaction_pool.clone(),
 		task_manager: &mut task_manager,
-		telemetry_connection_sinks: Default::default(),
 		config: parachain_config,
 		keystore: params.keystore_container.sync_keystore(),
 		backend: backend.clone(),
@@ -175,7 +176,7 @@ where
 
 	let announce_block = {
 		let network = network.clone();
-		Arc::new(move |hash, data| network.announce_block(hash, data))
+		Arc::new(move |hash, data| network.announce_block(hash, Some(data)))
 	};
 
 	if validator {
@@ -228,7 +229,7 @@ pub async fn start_node(
 	parachain_config: Configuration,
 	collator_key: CollatorPair,
 	polkadot_config: Configuration,
-	id: polkadot_primitives::v0::Id,
+	id: ParaId,
 	validator: bool,
 ) -> sc_service::error::Result<(TaskManager, Arc<TFullClient<Block, RuntimeApi, Executor>>)> {
 	start_node_impl(

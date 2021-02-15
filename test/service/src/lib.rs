@@ -26,9 +26,9 @@ pub use cumulus_test_runtime as runtime;
 pub use genesis::*;
 
 use core::future::Future;
-use cumulus_network::BlockAnnounceValidator;
-use cumulus_primitives::ParaId;
-use cumulus_service::{
+use cumulus_client_network::BlockAnnounceValidator;
+use cumulus_primitives_core::ParaId;
+use cumulus_client_service::{
 	prepare_node_config, start_collator, start_full_node, StartCollatorParams, StartFullNodeParams,
 };
 use cumulus_test_runtime::{NodeBlock as Block, RuntimeApi};
@@ -40,7 +40,7 @@ use sc_network::{config::TransportConfig, multiaddr, NetworkService};
 use sc_service::{
 	config::{
 		DatabaseConfig, KeystoreConfig, MultiaddrWithPeerId, NetworkConfiguration,
-		OffchainWorkerConfig, PruningMode, WasmExecutionMethod,
+		OffchainWorkerConfig, KeepBlocks, TransactionStorageMode, PruningMode, WasmExecutionMethod,
 	},
 	BasePath, ChainSpec, Configuration, Error as ServiceError, PartialComponents, Role,
 	RpcHandlers, TFullBackend, TFullClient, TaskExecutor, TaskManager,
@@ -87,12 +87,13 @@ pub fn new_partial(
 
 	let transaction_pool = sc_transaction_pool::BasicPool::new_full(
 		config.transaction_pool.clone(),
+		config.role.is_authority().into(),
 		config.prometheus_registry(),
 		task_manager.spawn_handle(),
 		client.clone(),
 	);
 
-	let import_queue = cumulus_consensus::import_queue::import_queue(
+	let import_queue = cumulus_client_consensus::import_queue::import_queue(
 		client.clone(),
 		client.clone(),
 		inherent_data_providers.clone(),
@@ -118,7 +119,7 @@ pub fn new_partial(
 /// Start a node with the given parachain `Configuration` and relay chain `Configuration`.
 ///
 /// This is the actual implementation that is abstract over the executor and the runtime api.
-#[sc_cli::prefix_logs_with(parachain_config.network.node_name.as_str())]
+#[sc_tracing::logging::prefix_logs_with(parachain_config.network.node_name.as_str())]
 async fn start_node_impl<RB>(
 	parachain_config: Configuration,
 	collator_key: CollatorPair,
@@ -193,14 +194,13 @@ where
 		Box::new(move |_, _| rpc_ext_builder(client.clone()))
 	};
 
-	let rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
+	let (rpc_handlers, _) = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
 		on_demand: None,
 		remote_blockchain: None,
 		rpc_extensions_builder,
 		client: client.clone(),
 		transaction_pool: transaction_pool.clone(),
 		task_manager: &mut task_manager,
-		telemetry_connection_sinks: Default::default(),
 		config: parachain_config,
 		keystore: params.keystore_container.sync_keystore(),
 		backend,
@@ -211,7 +211,7 @@ where
 
 	let announce_block = {
 		let network = network.clone();
-		Arc::new(move |hash, data| network.announce_block(hash, data))
+		Arc::new(move |hash, data| network.announce_block(hash, Some(data)))
 	};
 
 	let polkadot_full_node = polkadot_full_node.with_client(polkadot_test_service::TestClient);
@@ -395,7 +395,9 @@ pub fn node_config(
 		},
 		state_cache_size: 67108864,
 		state_cache_child_ratio: None,
-		pruning: PruningMode::ArchiveAll,
+		state_pruning: PruningMode::ArchiveAll,
+		keep_blocks: KeepBlocks::All,
+		transaction_storage: TransactionStorageMode::BlockBody,
 		chain_spec: spec,
 		wasm_method: WasmExecutionMethod::Interpreted,
 		// NOTE: we enforce the use of the native runtime to make the errors more debuggable
@@ -413,8 +415,10 @@ pub fn node_config(
 		rpc_cors: None,
 		rpc_methods: Default::default(),
 		prometheus_config: None,
+		telemetry_handle: None,
 		telemetry_endpoints: None,
 		telemetry_external_transport: None,
+		telemetry_span: None,
 		default_heap_pages: None,
 		offchain_worker: OffchainWorkerConfig {
 			enabled: true,
